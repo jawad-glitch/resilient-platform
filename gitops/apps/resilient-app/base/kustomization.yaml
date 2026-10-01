@@ -3,3 +3,6 @@ kind: Kustomization
 resources:
   - rollout.yaml
   - service.yaml
+  - service-canary.yaml
+  - service-stable.yaml
+  - analysistemplate.yaml

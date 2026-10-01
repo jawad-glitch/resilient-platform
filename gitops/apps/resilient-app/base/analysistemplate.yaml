@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: error-rate
+spec:
+  args:
+    - name: service
+  metrics:
+    - name: error-rate
+      interval: 10s
+      count: 3
+      failureLimit: 0
+      provider:
+        job:
+          spec:
+            backoffLimit: 0
+            template:
+              spec:
+                restartPolicy: Never
+                containers:
+                  - name: probe
+                    image: ghcr.io/jawad-glitch/resilient-app:37bd169456bd300a3fe8ee491ce299196ff494f6
+                    command: ["python", "-c"]
+                    args:
+                      - |
+                        import sys, urllib.request
+                        url = sys.argv[1]
+                        total, errors = 50, 0
+                        for _ in range(total):
+                            try:
+                                urllib.request.urlopen(url, timeout=2).read()
+                            except Exception:
+                                errors += 1
+                        rate = errors / total
+                        print(f"error rate: {rate:.0%}")
+                        sys.exit(1 if rate > 0.10 else 0)
+                      - "http://{{args.service}}.app.svc.cluster.local/"

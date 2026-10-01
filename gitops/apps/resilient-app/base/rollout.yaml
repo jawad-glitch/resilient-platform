@@ -41,8 +41,20 @@ spec:
             allowPrivilegeEscalation: false
   strategy:
     canary:
+      canaryService: resilient-app-canary
+      stableService: resilient-app-stable
       steps:
         - setWeight: 20
-        - pause: {duration: 30s}
+        - analysis:
+            templates:
+              - templateName: error-rate
+            args:
+              - name: service
+                value: resilient-app-canary
         - setWeight: 60
-        - pause: {duration: 30s}
+        - analysis:
+            templates:
+              - templateName: error-rate
+            args:
+              - name: service
+                value: resilient-app-canary
