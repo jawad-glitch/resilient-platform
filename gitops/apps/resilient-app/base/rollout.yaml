@@ -20,9 +20,9 @@ spec:
             - containerPort: 8080
           env:
             - name: APP_VERSION
-              value: v2
+              value: v3
             - name: ERROR_RATE
-              value: "0"
+              value: "0.5"
             - name: REGION
               value: unknown
           readinessProbe:
