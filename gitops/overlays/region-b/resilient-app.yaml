@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: resilient-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/jawad-glitch/resilient-platform
+    targetRevision: main
+    path: gitops/apps/resilient-app/overlays/region-b
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: app
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
